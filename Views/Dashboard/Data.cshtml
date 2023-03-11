@@ -1,0 +1,33 @@
+﻿@model EasyOverTime.Models.Form.OvertimeData;
+@*@model List<EasyOverTime.Models.Form.OvertimeData>;*@
+<a class="btn-addnew btn-primary mb-2" id="addnew-data-button" href="">New</a>
+<table class="table table-bordered" id="data-table">
+	<thead class="p-5 thead" id="data-thead">
+		<tr>
+			<th>DATE</th>
+			<th>TIME START</th>
+			<th>TIME END</th>
+			<th>TOTAL NO OF HOURS</th>
+			<th>REASON</th>
+			<th>DELETE</th>
+		</tr>
+	</thead>
+	<tbody class="tableBody" id="tableBody">
+	@*	if ( Model != null)
+		{*@
+			foreach (var data in Model)
+			{
+				<tr class="datas" id="table-datas">
+					<td><input class="form-control" name="Date" id="date" asp-for="@Model.Date" type="date" /></td>
+					<td><input class="form-control" name="TimeStart" id="time-start" asp-for="@Model.TimeStart" type="time" /></td>
+					<td><input class="form-control" name="TimeEnd" id="time-out" asp-for="@Model.TimeEnd" type="time" /></td>
+					<td><input class="form-control" name="TotalNumberOfHours" id="total-number-of-hours" asp-for="@Model.TotalNumberOfHours" type="number" /></td>
+					<td><textarea class="form-control" name="Reason" id="reason" asp-for="@Model.Reason" rows="3"></textarea></td>
+					<td id="deleteRow"></td>
+				</tr>
+			}
+		@*}*@
+
+
+	</tbody>
+</table>

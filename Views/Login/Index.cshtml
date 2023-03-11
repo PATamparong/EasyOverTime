@@ -1,0 +1,78 @@
+﻿@model EasyOverTime.Models.Login.LoginModel;
+@{
+	ViewBag.Title = "Login";
+	ViewData["Title"] = "LOGIN";
+}
+<center>
+	<div class="container" id="container">
+		@*<form asp-action="Dashboard" asp-controller="Dashboard" asp-route-returnurl="@ViewData["Dasboard"]" method="post" role="form" autocomplete="on">*@
+		<form class="form" autocomplete="on">
+			<div class="card text-center" style="width:30rem;">
+				<div class="card-title pt-4">@ViewData["Title"]</div>
+				<span id="status-message"></span>
+				<div class="input-group input-group-sm mb-3 ps-4 pe-4">
+					@Html.AntiForgeryToken()
+					@*@Html.ValidationMessageFor(m => m.Username, "Please enter your username", new {@class = "text-danger"})*@
+					<span class="input-group-text" asp-for="Username" value="" id="inputGroup-sizing-sm">Username</span>
+					<input class="form-control" name="Username" id="username" asp-for="@Model.Username" type="text" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+					<span class="text-danger" id="username-status-message" data-valmsg-for="Username" data-valmsg-replace="true" style="color:red;"></span>
+				</div>
+
+				<div class="input-group input-group-sm mb-3  ps-4 pe-4">
+					<span class="input-group-text" asp-for="Password" id="inputGroup-sizing-sm">Password</span>
+					<input class="form-control" id="password" asp-for="@Model.Password" type="password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+					<span class="text-danger" id="password-status-message" asp-validation-for="Password" style="color:red;"></span>
+				</div>
+				<div class="d-grid gap-2 ps-4 pe-4 pt-2 pb-4">
+					<button class="button btn-primary p-1" id="btn-login" type="button">Submit</button>
+				</div>
+			</div>
+		</form>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#btn-login").click(function () {
+					let payload ={
+					"Username":$("#username").val(),
+					"Password":$("#password").val()
+					};
+
+					console.log(payload, "PAYLOADDDD");
+					$.ajax({
+						type:"POST",
+						url:"/Authenticate/login",
+						data: JSON.stringify(payload),
+						dataType: "json",
+						contentType: "application/json",
+						success: (result) => {
+							console.log(result, "RESULTSSSS");
+
+							if(result.status === "success"){
+								$("#status-message").html(result.message);
+								//$.get("@Url.Action("Dashboard","Dashboard")", function(data){
+									window.location.href = "@Url.Action("Dashboard", "Dashboard")";
+									sessionStorage.setItem('token', result.token);
+								//})
+							}else{
+								$("#status-message").html("error while logging user!");
+								window.location.href = "@Url.Action("Login", "Login")";
+							}
+
+
+						},
+						error: () => {
+							$("#status-message").html("Something went wrong!");
+						}
+					});
+				});
+			});
+
+		</script>
+	</div>
+</center>
+
+
+
+
+

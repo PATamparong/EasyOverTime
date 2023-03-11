@@ -1,0 +1,176 @@
+﻿
+@model EasyOverTime.Models.Form.OvertimeFormModel;
+@{
+}
+
+<card class="card" id="dashboard-container">
+	<center>
+		<h3 class="card-title pt-4">Overtime Work Authorization Form</h3>
+	</center>
+	@*<form class="form m-5" method="post" asp-action="OvertimeFormInsert" asp-controller="Dashboard" autocomplete="off">*@
+
+	<form class="form m-5" method="post" asp-action="OvertimeDataInsert" asp-controller="DashboardLogic" autocomplete="off">
+		<div class="row mb-2">
+			<div class="col-6">
+				<label>ID NUMBER:</label>
+				<input class="form-control" name="IdNumber" asp-for="@Model.IdNumber" id="id-number" type="number" />
+			</div>			
+		</div>
+
+		<div class="row gy-2">
+			<div class="col-6 form-floating">
+				<input type="text" class="form-control" name="Name" asp-for="@Model.Name" id="Name" placeholder="Name">
+				<label class="ms-3" for="Name">Name</label>
+			</div>
+
+			<div class="col-6 form-floating">
+				<input type="text" class="form-control" name="Branch" asp-for="@Model.Branch" id="Branch" placeholder="Branch" />
+				<label class="ms-3" for="Branch">Branch/division</label>
+			</div>
+		</div>
+		<div class="row gy-3 mt-1">
+
+			<div class="col-6 form-floating">
+				<input type="text" class="form-control" name="Position" asp-for="@Model.Position" id="Position" placeholder="Position">
+				<label class="ms-3" for="Position">Position</label>
+			</div>
+
+			<div class="col-6 form-floating">
+				<input type="date" class="form-control" name="DateFiled" asp-for="@Model.DateFiled" id="DateFiled" placeholder="Date Filed" />
+				<label class="ms-3" for="DateFiled">Date Filed</label>
+			</div>
+		</div>
+
+		<div class="row mt-5 mb-5">
+			<div class="col">
+				<label>Regular OT:</label>
+				<input type="checkbox" value="regular ot" id="Specification" asp-for="@Model.Specification" name="Specification"/>
+			</div>
+
+			<div class="col">
+				<label>Restday OT:</label>
+				<input type="checkbox" value="restdy ot" id="Specification" asp-for="@Model.Specification" name="Specification"/>
+			</div>
+
+			<div class="col">
+				<label>Special Holiday OT:</label>
+				<input type="checkbox" value="special holiday ot" id="Specification" asp-for="@Model.Specification" name="Specification"/>
+			</div>
+
+			<div class="col">
+				<label>Legal Holiday OT:</label>
+				<input type="checkbox" value="legal holiday ot" id="Specification" asp-for="@Model.Specification" name="Specification"/>
+			</div>
+
+			<div class="col">
+				<label>Others:</label>
+				<input type="checkbox" value="others" id="Specification" asp-for="@Model.Specification" name="Specification"/>
+			</div>
+		</div>
+		
+		<span id="status-message"></span>
+		<partial name="Data"/>
+
+		<div class="row">
+			<div class="col-6">
+				<label>TOTAL:</label>
+				<input class="form-control" name="Total" id="Total" value="1" asp-for="@Model.Total" type="number" readonly />
+			</div>
+
+			<div class="col-6 d-flex">
+				<button class="btn btn-primary mt-4 ms-auto" id="btn-dashboard" type="button">Submit</button>
+			</div>
+		</div>
+		
+
+	</form>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+</script>
+	<script type="text/javascript">
+
+		$(document).ready(() => {
+			$("#addnew-data-button").on('click',(e) => {
+				e.preventDefault();
+				let button = '<a id="newDeleteRow" href="">DELETE</a>';
+				let newTable = $("#table-datas").clone();
+				$(newTable).find("#deleteRow").append(button);
+				$("#tableBody").append(newTable);
+				newTable.addClass();
+				return false;;
+			});
+
+			$("#table-datas").on("click","#newDeleteRow" ,(e) => {
+				e.preventDefault();
+				$(this).parent().remove();
+				return false;
+			})
+
+			$("#btn-dashboard").click(function () {
+			let payloadForOverTimeForm = {
+				"IdNumber":$("#id-number").val(),
+				"Name": $("#Name").val(),
+				"Total":$("#Total").val(),
+				"Branch": $("#Branch").val(),
+				"Position": $("#Position").val(),
+				"DateFiled": $("#DateFiled").val(),
+				"Specification": $("#Specification").val(),				
+			};
+
+			let payloadForOvertimeData = {
+				"IdNumber":$("#id-number").val(),
+				"Date": $("#date").val(),
+				"TimeStart": $("#time-start").val(),
+				"TimeEnd": $("#time-out").val(),
+				"TotalNumberOfHours": $("#total-number-of-hours").val(),
+				"Reason": $("#reason").val(),
+			};
+
+			console.log(payloadForOverTimeForm, "PAYLOADDDD1");
+			console.log(payloadForOvertimeData, "PAYLOADDDD2");
+			$.ajax({
+				type:"POST",
+				url:"/DashboardLogic/insertovertimedata",
+				data: JSON.stringify(payloadForOverTimeForm),
+				dataType: "json",
+				contentType: "application/json",
+				success: (result) => {
+					console.log(result, "RESULTSSSS for insert prev data");
+
+					if(result.status === "success"){
+						$("#status-message").html(result.message);
+					}else{
+						$("#status-message").html("error while logging user!");
+						window.location.href = "@Url.Action("Dashboard", "Dashboard")";
+					}
+				},
+				error: () => {
+					$("#status-message").html("Something went wrong!");
+				}
+			});
+
+
+			$.ajax({
+				type:"POST",
+				url:"/DashboardLogic/formdata",
+				data: JSON.stringify(payloadForOvertimeData),
+				dataType: "json",
+				contentType: "application/json",
+				success: (result) => {
+					console.log(result, "RESULTSSSS for form data");
+
+					if(result.status === "success"){
+						$("#status-message").html(result.message);
+					}else{
+						$("#status-message").html("error while logging user!");
+						window.location.href = "@Url.Action("Dashboard", "Dashboard")";
+					}
+				},
+				error: () => {
+					$("#status-message").html("Something went wrong!");
+				}
+			});
+			});
+		});
+	</script>
+</card>
